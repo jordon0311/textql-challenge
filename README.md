@@ -35,6 +35,6 @@ Criteria for quality:
 
 ```sql
 SELECT "firstName","lastName", "age", "eyeColor" FROM table WHERE age > 30 OR ("eyeColor" = "blue" AND gender = "male")
- SELECT  "firstName","lastName", "age", "eyeColor"  FROM  user  WHERE  ("eye Color" = "blue" AND gender != "female") OR ("eyeColor" = "blue" AND gender != "male");
+ SELECT  "firstName","lastName", "age", "eyeColor"  FROM  user  WHERE  ("eyeColor" = "blue" AND gender != "female") OR ("eyeColor" = "blue" AND gender != "male");
 
 ```

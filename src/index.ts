@@ -38,66 +38,71 @@ const main = async () => {
   });
 
   rl.question("Enter your SQL query: ", (query) => {
-    /** Parse the query */
-    const parsedQuery: ParsedQuery = parseQuery(query);
+    try {
+      /** Parse the query */
+      const parsedQuery: ParsedQuery = parseQuery(query);
 
-    /**
-     * Get all the row for the selected table
-     * (the challenge only supports one table,
-     * but it's easy to support multiple tables
-     * so i am leaving it here for future me)
-     */
-    const allRows: ParsedTable | null = getAllRows({
-      parsedData,
-      tableName: parsedQuery.from,
-    });
+      /**
+       * Get all the row for the selected table
+       * (the challenge only supports one table,
+       * but it's easy to support multiple tables
+       * so i am leaving it here for future me)
+       */
+      const allRows: ParsedTable | null = getAllRows({
+        parsedData,
+        tableName: parsedQuery.from,
+      });
 
-    if (!allRows) {
-      console.error(`Table ${parsedQuery.from} not found`);
-      rl.close();
-      return;
-    }
-
-    /** Handle the potential where condition */
-    const filteredRows: ParsedTable = (() => {
-      /** Return allRows if there is no WHERE condition */
-      if (!parsedQuery.whereStr) {
-        return allRows;
+      if (!allRows) {
+        console.error(`Table ${parsedQuery.from} not found`);
+        rl.close();
+        return;
       }
 
-      /** Tokenize the WHERE string */
-      const tokens: Token[] = tokenize(parsedQuery.whereStr);
+      /** Handle the potential where condition */
+      const filteredRows: ParsedTable = (() => {
+        /** Return allRows if there is no WHERE condition */
+        if (!parsedQuery.whereStr) {
+          return allRows;
+        }
 
-      /** Convert the tokens into a WhereCondition */
-      const where: WhereCondition = parseWhereCondition(tokens);
+        /** Tokenize the WHERE string */
+        const tokens: Token[] = tokenize(parsedQuery.whereStr);
 
-      /** Execute the WhereCondition to filter the TableRows */
-      const result: ParsedTable = executeWhereCondition({
-        parsedTable: allRows,
-        where,
+        /** Convert the tokens into a WhereCondition */
+        const where: WhereCondition = parseWhereCondition(tokens);
+
+        /** Execute the WhereCondition to filter the TableRows */
+        const result: ParsedTable = executeWhereCondition({
+          parsedTable: allRows,
+          where,
+        });
+
+        /** Return the filtered rows */
+        return result;
+      })();
+
+      /** Select the desired columns from the filtered rows */
+      const { schema, data } = filteredRows;
+      const rowDtos = data.map((row) => {
+        const dto = selectColumns({
+          selectedColumns: parsedQuery.select,
+          schema,
+          row,
+        });
+
+        return dto;
       });
 
-      /** Return the filtered rows */
-      return result;
-    })();
+      /** Return the DTOs */
+      const json = JSON.stringify(rowDtos, null, 2);
+      console.info("\nRESULTS:\n", json);
 
-    /** Select the desired columns from the filtered rows */
-    const { schema, data } = filteredRows;
-    const rowDtos = data.map((row) => {
-      const dto = selectColumns({
-        selectedColumns: parsedQuery.select,
-        schema,
-        row,
-      });
-
-      return dto;
-    });
-
-    /** Return the DTOs */
-    const json = JSON.stringify(rowDtos, null, 2);
-    console.info("\nRESULTS:\n", json);
-
-    rl.close();
+      rl.close();
+    } catch (error) {
+      console.error(error);
+      rl.close();
+    }
   });
 };
 
