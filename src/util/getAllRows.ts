@@ -6,5 +6,7 @@ type Params = {
 };
 
 export const getAllRows = (params: Params): ParsedTable | null => {
-  throw new Error("Not implemented");
+  const { parsedData, tableName } = params;
+  const table = parsedData.find((t) => t.schema.tableName === tableName);
+  return table || null;
 };
