@@ -43,10 +43,7 @@ const main = async () => {
       const parsedQuery: ParsedQuery = parseQuery(query);
 
       /**
-       * Get all the row for the selected table
-       * (the challenge only supports one table,
-       * but it's easy to support multiple tables
-       * so i am leaving it here for future me)
+       * Get all the rows for the selected table
        */
       const allRows: ParsedTable | null = getAllRows({
         parsedData,
@@ -84,6 +81,10 @@ const main = async () => {
 
       /** Select the desired columns from the filtered rows */
       const { schema, data } = filteredRows;
+      /**
+       * Data Transfer Object (DTO) for filteredRows
+       * This contains only the selected columns
+       */
       const rowDtos = data.map((row) => {
         const dto = selectColumns({
           selectedColumns: parsedQuery.select,
