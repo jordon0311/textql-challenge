@@ -3,6 +3,12 @@ import { Token } from "../types";
 
 const operators = Object.values(OperatorType).map((v) => v as string);
 
+/**
+ * Tokenizes the input string and returns an array of tokens.
+ *
+ * @param input - The input string to tokenize.
+ * @returns An array of tokens.
+ */
 export const tokenize = (input: string): Token[] => {
   const rawTokens = rawTokenize(input);
 
@@ -35,6 +41,11 @@ export const tokenize = (input: string): Token[] => {
   return tokens;
 };
 
+/**
+ * Tokenizes the input string by splitting it into individual tokens.
+ * @param input The input string to tokenize.
+ * @returns An array of string tokens (not the Token type).
+ */
 const rawTokenize = (input: string): string[] => {
   const stringOperators = ['"', "'"];
 
