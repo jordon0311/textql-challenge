@@ -12,6 +12,12 @@ type Params = {
   where: WhereCondition;
 };
 
+/**
+ * Executes the WHERE condition on a parsed table and returns the filtered data.
+ * @param params.parsedTable - The table that we are executing the condition on.
+ * @param params.where - The WHERE condition to be executed.
+ * @returns The parsed table with the filtered data.
+ */
 export const executeWhereCondition = (params: Params): ParsedTable => {
   const { parsedTable, where } = params;
   const filteredData = parsedTable.data.filter((row) => {
@@ -32,14 +38,19 @@ const executeCondition = (
 ): TableRow | null => {
   switch (where.discriminator) {
     case "binary":
-      const binaryRes = executeBinaryCondition(row, where);
-      return binaryRes;
+      return executeBinaryCondition(row, where);
     case "group":
-      const groupRes = executeGroupCondition(row, where);
-      return groupRes;
+      return executeGroupCondition(row, where);
   }
 };
 
+/**
+ * Executes a binary condition on a given row of data.
+ * @param row The row of data to evaluate the condition on.
+ * @param condition The binary condition to evaluate.
+ * @returns The row if the condition is true, otherwise null.
+ * @throws Error if the left side of the condition is not a column key or if an invalid operator is used.
+ */
 const executeBinaryCondition = (
   row: TableRow,
   condition: BinaryCondition
@@ -68,6 +79,13 @@ const executeBinaryCondition = (
   }
 };
 
+/**
+ * Executes a group condition on a given row.
+ * @param row The row to evaluate the condition on.
+ * @param condition The group condition to execute.
+ * @returns The row if the condition is satisfied, otherwise null.
+ * @throws Error if an invalid operator is used in the group condition.
+ */
 const executeGroupCondition = (
   row: TableRow,
   condition: GroupCondition
