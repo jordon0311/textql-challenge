@@ -1,5 +1,12 @@
 import { ParsedQuery } from "../types";
 
+/**
+ * Parses the given query string and extracts the select columns, table name, and optional WHERE condition.
+ * The query must be in the format 'SELECT [columns] FROM [table] {optional: WHERE [condition]};'
+ * @param query The query string to parse.
+ * @returns An object containing the parsed select columns, table name, and optional WHERE condition.
+ * @throws Error if the query is not in the correct format or if it does not end with a semicolon.
+ */
 export const parseQuery = (query: string): ParsedQuery => {
   /**
    * This regex is magic and I made it all by myself
