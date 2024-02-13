@@ -36,6 +36,11 @@ const executeCondition = (
   row: TableRow,
   where: WhereCondition
 ): TableRow | null => {
+  /**
+   * This switch is to separate the logic between simple (binary)
+   * and complex (group) conditions. A group condition is a nested condition
+   * that has the possibility of being recursive.
+   */
   switch (where.discriminator) {
     case "binary":
       return executeBinaryCondition(row, where);
